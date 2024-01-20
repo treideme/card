@@ -1,0 +1,13 @@
+build
+Debug
+Release
+
+.project
+.cproject
+.ccsproject
+.settings
+.idea
+.launches
+targetConfigs
+
+Log

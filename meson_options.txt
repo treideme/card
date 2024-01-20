@@ -1,0 +1,1 @@
+option('MSP430HOME', type : 'string', value : 'C:/TI/msp430-gcc/', description : 'MSP430 Toolchain root directory')
