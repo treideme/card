@@ -56,6 +56,4 @@
 void hardware_init();
 void delay_ms(int ms);
 
-
-
 #endif // _hardware_h_

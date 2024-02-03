@@ -33,7 +33,7 @@ int main(void)
   BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
   DCOCTL = CALDCO_1MHZ;
   P1SEL = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
-  P1SEL2 = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
+  P1SEL2 = BIT1 + BIT2 ;                    // P1.1 = RXD, P1.2=TXD
   UCA0CTL1 |= UCSSEL_2;                     // SMCLK
   UCA0BR0 = 104;                            // 1MHz 9600
   UCA0BR1 = 0;                              // 1MHz 9600
