@@ -14,31 +14,27 @@
  * limitations under the License.
  */
 /**
- * Main firmware entry point.
+ * Utility functions for I2C transfer.
+ * @file i2c.h
  * @author Thomas Reidemeister
- * @file main.c
  */
-#include <hardware.h>
-#include <msp430.h>
-#include "uart.h"
+#ifndef _i2c_h_
+#define _i2c_h_
 
-static int field_seen = 0;
+#include <stdint.h>
 
-int main(void) {
-  hardware_init();
-  uart_send("Hello!\r\n");
-  P1OUT &= ~BIT0;
-  __bis_SR_register(LPM0_bits | GIE); // Enter LPM0, interrupts enabled // LPM0_bits +
-  while(1) {
-      if(field_seen) {
-//          uart_send("Field!\r\n");
-          P1OUT |= BIT0;
-          field_seen = 0;
-//          P1IE |= BIT3;  // enable P1.3 interrupt
-//          __bis_SR_register(LPM3_bits); // enter low power
-          // Blink with timed RTC interrupt and then reenable IRQ
-      }
-  }
-  return 0;
-}
+extern uint8_t *i2c_tx_data;                     // Pointer to TX data
+extern uint8_t *i2c_rx_data;                     // Pointer to RX data
+extern uint8_t i2c_tx_count;                         // Transmit bytes left
+extern uint8_t i2c_rx_count;
 
+static uint8_t TxByteCtr;
+static uint8_t RxByteCtr;
+
+void i2c_master_init(uint8_t slaveAddress);
+void i2c_write(uint8_t ByteCtr, uint8_t *TxData);
+void i2c_read(uint8_t ByteCtr, volatile uint8_t *RxData);
+
+
+
+#endif // _i2c_h_

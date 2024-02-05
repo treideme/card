@@ -14,31 +14,19 @@
  * limitations under the License.
  */
 /**
- * Main firmware entry point.
+ * Utility functions for UART processing.
+ * @file uart.h
  * @author Thomas Reidemeister
- * @file main.c
  */
-#include <hardware.h>
+#ifndef _uart_h_
+#define _uart_h_
+
 #include <msp430.h>
-#include "uart.h"
 
-static int field_seen = 0;
+extern char *uart_last_out_ptr;
+extern char uart_last_in;
 
-int main(void) {
-  hardware_init();
-  uart_send("Hello!\r\n");
-  P1OUT &= ~BIT0;
-  __bis_SR_register(LPM0_bits | GIE); // Enter LPM0, interrupts enabled // LPM0_bits +
-  while(1) {
-      if(field_seen) {
-//          uart_send("Field!\r\n");
-          P1OUT |= BIT0;
-          field_seen = 0;
-//          P1IE |= BIT3;  // enable P1.3 interrupt
-//          __bis_SR_register(LPM3_bits); // enter low power
-          // Blink with timed RTC interrupt and then reenable IRQ
-      }
-  }
-  return 0;
-}
+void uart_init();
+void uart_send(const char*s);
 
+#endif // _hardware_h_
