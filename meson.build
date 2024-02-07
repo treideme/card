@@ -34,7 +34,15 @@ t_mapfile = '-Wl,-Map,@0@.map'
 #subdir('usb')
 
 progs = [
-	['business_card', ['main.c', 'hardware.c', 'uart.c'], 'GPIO/LED example', 'msp430g2553'],
+	['business_card', [
+		 'main.c',
+		 'hardware.c',
+		 'interrupts.c',
+		 'i2c.c',
+		 'st25dv.c',
+		 'uart.c'],
+	 'Business Card',
+	 'msp430g2553'],
 ]
 
 debug = run_target('debug',
