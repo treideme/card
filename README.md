@@ -1,5 +1,7 @@
 # My Business Card
 
+[![.github/workflows/ci.yml](https://github.com/treideme/card/actions/workflows/ci.yml/badge.svg)](https://github.com/treideme/card/actions/workflows/ci.yml)
+
 This repository contains the design files of my business card.
 
 The card is based on an MSP430G2553 microcontroller, which is 
