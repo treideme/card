@@ -1,4 +1,12 @@
-# MSP430G2553 Sample Code
+# My Business Card
+
+This repository contains the design files of my business card.
+
+The card is based on an MSP430G2553 microcontroller, which is 
+programmed to blink an LED in a pattern and transmits a message
+via NFC.
+
+## Background about the MSP430G2553
 
 This repo contains various code samples for the MSP-430G2 launchpad.
 The processor seems reasonably low-cost for most applications and is
@@ -29,16 +37,11 @@ reasonably low-cost, when in-stock.
 
 ```shell
 # Build all sources
-meson build
+meson build --cross-file meson.ini
 cd build
-ninja
+meson -v -C build compile
 # Flash sources to target
 meson compile flash_<sample_name>
-
-# Debug any attached sample
-meson debug
-# Connect GDB-server compliant IDE like clion
-# see run/blink.run.xml as sample
 ```
 
- * See [Hardware](inc/hardware.h) for the required peripheral connections.
+ * See [Hardware](hardware.h) for the required peripheral connections.
