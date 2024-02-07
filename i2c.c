@@ -28,10 +28,6 @@ uint8_t i2c_tx_count = 0;
 uint8_t i2c_rx_count = 0;
 
 void i2c_master_init(uint8_t slaveAddress) {
-    // Port Configuration
-    P1SEL |= BIT7 + BIT6;                     // Assign I2C pins to USCI_B0
-    P1SEL2|= BIT7 + BIT6;                     // Assign I2C pins to USCI_B0
-
     //USCI Configuration
     UCB0CTL1 |= UCSWRST;                           // Enable SW reset
     UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;          // I2C Master, synchronous mode
@@ -47,7 +43,7 @@ void i2c_master_init(uint8_t slaveAddress) {
 }
 
 
-void i2c_write(uint8_t ByteCtr, uint8_t *TxData) {
+void i2c_write(uint8_t count, uint8_t *txd) {
     __disable_interrupt();
 
     //Interrupt management
@@ -55,8 +51,8 @@ void i2c_write(uint8_t ByteCtr, uint8_t *TxData) {
     IE2 |= UCB0TXIE;                               // Enable TX interrupt
 
     //Pointer to where data is stored to be sent
-    i2c_tx_data = (uint8_t *) TxData;                  // TX array start address
-    TxByteCtr = ByteCtr;                           // Load TX byte counter
+    i2c_tx_data = (uint8_t *) txd;                 // TX array start address
+    i2c_tx_count = count;                          // Load TX byte counter
 
     //Send start condition
     UCB0CTL1 |= UCTR + UCTXSTT;                    // I2C TX, start condition
@@ -65,7 +61,7 @@ void i2c_write(uint8_t ByteCtr, uint8_t *TxData) {
     while (UCB0CTL1 & UCTXSTP);
 }
 
-void i2c_read(uint8_t ByteCtr, volatile uint8_t *RxData) {
+void i2c_read(uint8_t count, volatile uint8_t *rxd) {
     __disable_interrupt();
 
     //Interrupt management
@@ -75,11 +71,11 @@ void i2c_read(uint8_t ByteCtr, volatile uint8_t *RxData) {
     IE2 |= UCB0RXIE;                               // Enable RX interrupt
 
     //Pointer to where data will be stored
-    i2c_rx_data = (uint8_t *) RxData;                  // Start of RX buffer
-    RxByteCtr = ByteCtr;                           // Load RX byte counter
+    i2c_rx_data = (uint8_t *)rxd;                  // Start of RX buffer
+    i2c_rx_count = count;                          // Load RX byte counter
 
     //If only 1 byte will be read send stop signal as soon as it starts transmission
-    if(RxByteCtr == 1){
+    if(i2c_rx_count == 1){
         UCB0CTL1 |= UCTXSTT;                       // I2C start condition
         while (UCB0CTL1 & UCTXSTT);                // Start condition sent?
         UCB0CTL1 |= UCTXSTP;                       // I2C stop condition

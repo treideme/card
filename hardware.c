@@ -21,14 +21,11 @@
 #include "hardware.h"
 
 void hardware_init() {
-  WDTCTL = WDTPW | WDTHOLD;       // stop watchdog timer
+  WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
   // Configure clock to 1MHz
-  DCOCTL  = 0;           // Select lowest DCOx and MODx setting
-  BCSCTL1 = CALBC1_1MHZ; // Set DCO
+  DCOCTL  = 0;                // Select lowest DCOx and MODx setting
+  BCSCTL1 = CALBC1_1MHZ;      // Set DCO
   DCOCTL  = CALDCO_1MHZ;
-  // Clock config
-  BCSCTL1 = XT2OFF | DIVA1 | DIVA0 | 0b111; // turn XT2 off, and divide ACLK by 8, RSEL ~ 1MHz
-  BCSCTL3 = LFXT1S1;  // Use 12KHz VLOCLK as ACLK
 
   // Pin configurations
   P1DIR |= BIT0;
@@ -50,21 +47,12 @@ void hardware_init() {
   P1SEL |= BIT6 + BIT7; // Assign I2C pins to USCI_B0
   P1SEL2|= BIT6 + BIT7; // Assign I2C pins to USCI_B0
 
-  // Initialise I2c
-  UCB0CTL1 |= UCSWRST;                           // Enable SW reset
-  UCB0CTL0 = UCMST | UCMODE0 | UCMODE1 | UCSYNC; // Enable I2C master
-  UCB0CTL1 = UCSSEL1 | UCTXSTT | UCSWRST;        // SMCLK as source, generate start condition
-  UCB0BR0 = 12;                                  // fSCL = SMCLK/12 = ~100kHz
-  UCB0BR1 = 0;
-
-  UCB0I2CSA = 0x2D;
-
-  // Configure timer to use 12KHz crystal
+  i2c_master_init(0x2D);
 }
 
 void delay_ms(int ms) {
-    volatile unsigned int i;
+    volatile unsigned int i, j;
     for(i=ms; i>0; i--) {
-        for(int j=0; j < 200; j++); // delay
+        for(j=0; j < 200; j++); // delay
     }
 }

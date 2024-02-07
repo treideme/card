@@ -25,11 +25,11 @@
 
 extern uint8_t *i2c_tx_data;                     // Pointer to TX data
 extern uint8_t *i2c_rx_data;                     // Pointer to RX data
-extern uint8_t i2c_tx_count;                         // Transmit bytes left
+extern uint8_t i2c_tx_count;                     // Transmit bytes left
 extern uint8_t i2c_rx_count;
 
-static uint8_t TxByteCtr;
-static uint8_t RxByteCtr;
+//static uint8_t TxByteCtr;
+//static uint8_t RxByteCtr;
 
 void i2c_master_init(uint8_t slaveAddress);
 void i2c_write(uint8_t ByteCtr, uint8_t *TxData);

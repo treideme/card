@@ -41,8 +41,6 @@
 #include "uart.h"
 #include "i2c.h"
 
-// Continue from https://github.com/heliocapella/msp430g2553_i2c/blob/master/i2c.c
-
 void hardware_init();
 void delay_ms(int ms);
 

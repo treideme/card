@@ -38,11 +38,8 @@ void uart_send(const char*s) {
   while(uart_last_out_ptr != NULL);
   __disable_interrupt();
   uart_last_out_ptr = (char*)s;
-//  // Pending interrupt from last
-//  if(IE2 & UCA0TXIFG) {
-//    UCA0TXBUF = *_last_out_ptr++;
-//  }
-  // Use interrupts from
+
+  // Enable interrupt
   IE2 |=UCA0TXIE;
   __enable_interrupt();
 }

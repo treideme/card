@@ -1,0 +1,65 @@
+# Basic continous integration for business card
+#    Copyright 2024 Thomas Reidemeister
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+# @author Thomas Reidemeister
+on:
+  push:
+    branches: [ ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build_firmware:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install OS dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget build-essential software-properties-common meson ninja-build unzip
+          # Download TI compiler and support files
+          wget https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-LlCjWuAbzH/9.3.1.2/msp430-gcc-9.3.1.11_linux64.tar.bz2
+          wget https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-LlCjWuAbzH/9.3.1.2/msp430-gcc-support-files-1.212.zip
+          tar -xjvf msp430-gcc-9.3.1.11_linux64.tar.bz2
+          unzip msp430-gcc-support-files-1.212.zip
+          mv msp430-gcc-9.3.1.11_linux64 msp430-gcc
+          mv msp430-gcc-support-files/include/* msp430-gcc/include
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          path: repo
+
+      - name: Build firmware
+        run: |
+          export MSP430HOME="$(pwd)/msp430-gcc"
+          export PATH="${MSP430HOME}/bin:${PATH}"
+          msp430-elf-gcc --version
+          ls ${MSP430HOME}/include
+          cd repo
+          meson build --cross-file=cross.ini -DMSP430HOME=${MSP430HOME}
+          ninja -C build
+          cd ..
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          if-no-files-found: error
+          path: |
+            repo/build/business_card.bin
+            repo/build/business_card.elf
+            repo/build/business_card.hex
+            repo/build/business_card.map

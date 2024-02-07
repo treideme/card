@@ -41,17 +41,12 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void)
     uart_last_in = UCA0RXBUF;                    // TX -> RXed character
   }
   if(IFG2 & UCB0RXIE) {
-    RxByteCtr--;                              // Decrement RX byte counter
-    if (RxByteCtr)
-    {
-      RxWord = (unsigned int)UCB0RXBUF << 8;  // Get received byte
-      if (RxByteCtr == 1)                     // Only one byte left?
-        UCB0CTL1 |= UCTXSTP;                  // Generate I2C stop condition
-    }
-    else
-    {
-      RxWord |= UCB0RXBUF;                    // Get final received byte,
-                                              // Combine MSB and LSB
+    if(i2c_rx_count) {
+      i2c_rx_count--;                            // Decrement RX byte counter
+      *i2c_rx_data = UCB0RXBUF;
+      if (i2c_rx_count == 1) {                   // Only one byte left?
+        UCB0CTL1 |= UCTXSTP;                     // Generate I2C stop condition
+      }
     }
   }
 }

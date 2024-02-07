@@ -21,24 +21,18 @@
 #include <hardware.h>
 #include <msp430.h>
 #include "uart.h"
+#include "i2c.h"
 
-static int field_seen = 0;
+//static int field_seen = 0;
 
 int main(void) {
   hardware_init();
-  uart_send("Hello!\r\n");
-  P1OUT &= ~BIT0;
-  __bis_SR_register(LPM0_bits | GIE); // Enter LPM0, interrupts enabled // LPM0_bits +
-  while(1) {
-      if(field_seen) {
-//          uart_send("Field!\r\n");
-          P1OUT |= BIT0;
-          field_seen = 0;
-//          P1IE |= BIT3;  // enable P1.3 interrupt
-//          __bis_SR_register(LPM3_bits); // enter low power
-          // Blink with timed RTC interrupt and then reenable IRQ
-      }
-  }
+
+  uart_send("Hello World!\r\n");
+//  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
+  for(;;);
+
+
   return 0;
 }
 
