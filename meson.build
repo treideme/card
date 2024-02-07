@@ -12,8 +12,7 @@ assert(meson.is_cross_build(), 'Use cross-build for MSP430 target')
 #msp430flasher = find_program('msp430flasher', required : true)
 objcopy = find_program('msp430-elf-objcopy', required : true)
 objdump = find_program('msp430-elf-objdump', required : true)
-gdbserver = find_program('gdb_agent_console', required: true)
-
+# gdbserver = find_program('gdb_agent_console', required: true)
 
 incdir = [
 	#include_directories('inc'),
@@ -45,9 +44,9 @@ progs = [
 	 'msp430g2553'],
 ]
 
-debug = run_target('debug',
-		command : [gdbserver, get_option('MSP430HOME')+'/msp430.dat'],
-	)
+#debug = run_target('debug',
+#		command : [gdbserver, get_option('MSP430HOME')+'/msp430.dat'],
+#)
 
 foreach p : progs
 
