@@ -35,8 +35,10 @@ jobs:
           mv msp430-gcc-9.3.1.11_linux64 msp430-gcc
       - name: Checkout repository
         uses: actions/checkout@v3
-        submodules: true
-        path: repo
+        with:
+          submodules: true
+          path: repo
+
       - name: Build firmware
         run: |
           export PATH="${HOME}/msp430-gcc/bin:${PATH}"
