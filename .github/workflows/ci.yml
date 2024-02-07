@@ -41,7 +41,8 @@ jobs:
 
       - name: Build firmware
         run: |
-          export PATH="${HOME}/msp430-gcc/bin:${PATH}"
+          export PATH="$(pwd)/msp430-gcc/bin:${PATH}"
+          msp430-elf-gcc --version
           cd repo
           meson build --cross-file=cross.ini
           ninja -C build
