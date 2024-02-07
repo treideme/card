@@ -44,6 +44,7 @@ jobs:
           export MSP430HOME="$(pwd)/msp430-gcc"
           export PATH="${MSP430HOME}/bin:${PATH}"
           msp430-elf-gcc --version
+          ls ${MSP430HOME}/include
           cd repo
           meson build --cross-file=cross.ini -DMSP430HOME=${MSP430HOME}
           ninja -C build
