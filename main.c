@@ -1,53 +1,38 @@
-//#include <hardware.h>
-//#include <msp430.h>
-//
-//int main(void) {
-//  hardware_init();
-//
-//  P1SEL = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
-//  P1SEL2 = BIT1 + BIT2 ;                    // P1.1 = RXD, P1.2=TXD
-//  UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-//  UCA0BR0 = 104;                            // 1MHz 9600
-//  UCA0BR1 = 0;                              // 1MHz 9600
-//  UCA0MCTL = UCBRS0;                        // Modulation UCBRSx = 1
-//  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-//  IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
-//
-//  __bis_SR_register(GIE);       // Enter LPM0, interrupts enabled // LPM0_bits +
-//  while(1);
-//  return 0;
-//}
-//
-//void __attribute__ ((interrupt(USCIAB0RX_VECTOR))) USCI0RX_ISR(void)
-//{
-//    while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-//    UCA0TXBUF = UCA0RXBUF;                    // TX -> RXed character
-//}
+/*
+ * Copyright 2024 Thomas Reidemeister
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * Main firmware entry point.
+ * @author Thomas Reidemeister
+ * @file main.c
+ */
+#include <hardware.h>
+#include <msp430.h>
+#include "uart.h"
+#include "i2c.h"
+
+//static int field_seen = 0;
+
+int main(void) {
+  hardware_init();
+
+  uart_send("Hello World!\r\n");
+//  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
+  for(;;);
 
 
-#include  "msp430g2553.h"
-
-int main(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
-  BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
-  DCOCTL = CALDCO_1MHZ;
-  P1SEL = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
-  P1SEL2 = BIT1 + BIT2 ;                    // P1.1 = RXD, P1.2=TXD
-  UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-  UCA0BR0 = 104;                            // 1MHz 9600
-  UCA0BR1 = 0;                              // 1MHz 9600
-  UCA0MCTL = UCBRS0;                        // Modulation UCBRSx = 1
-  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-  IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
-
-  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
   return 0;
 }
 
-//  Echo back RXed character, confirm TX buffer is ready first
-void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void)
-{
-  while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-  UCA0TXBUF = UCA0RXBUF;                    // TX -> RXed character
-}
