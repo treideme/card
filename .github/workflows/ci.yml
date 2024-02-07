@@ -41,10 +41,11 @@ jobs:
 
       - name: Build firmware
         run: |
-          export PATH="$(pwd)/msp430-gcc/bin:${PATH}"
+          export MSP430HOME="$(pwd)/msp430-gcc"
+          export PATH="${MSP430HOME}/bin:${PATH}"
           msp430-elf-gcc --version
           cd repo
-          meson build --cross-file=cross.ini
+          meson build --cross-file=cross.ini -DMSP430HOME=${MSP430HOME}
           ninja -C build
           cd ..
       - name: Upload installer artifact
