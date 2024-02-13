@@ -79,11 +79,10 @@ void i2c_read(uint8_t count, volatile uint8_t *rxd) {
         UCB0CTL1 |= UCTXSTT;                       // I2C start condition
         while (UCB0CTL1 & UCTXSTT);                // Start condition sent?
         UCB0CTL1 |= UCTXSTP;                       // I2C stop condition
-        __enable_interrupt();
     } else {
         UCB0CTL1 |= UCTXSTT;                       // I2C start condition
     }
-
-    __bis_SR_register(CPUOFF + GIE);               // Enter LPM0 w/ interrupts
+    __enable_interrupt();
+    //__bis_SR_register(CPUOFF + GIE);               // Enter LPM0 w/ interrupts
     while (UCB0CTL1 & UCTXSTP);                    // Ensure stop condition got sent
 }

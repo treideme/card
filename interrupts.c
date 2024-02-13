@@ -37,7 +37,7 @@ void __attribute__ ((interrupt(PORT1_VECTOR)))  PORT1_ISR(void)
 void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void)
 {
   // UART0
-  if(IFG2 & UCA0RXIE) {
+  if(IFG2 & UCA0RXIFG) {
     uart_last_in = UCA0RXBUF;                    // TX -> RXed character
   }
   if(IFG2 & UCB0RXIE) {
@@ -55,7 +55,7 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void)
 void __attribute__ ((interrupt(USCIAB0TX_VECTOR)))  USCI0TX_ISR(void)
 {
   // UART0
-  if(IFG2 & UCA0TXIE) {
+  if(IFG2 & UCA0TXIFG) {
     if(uart_last_out_ptr != NULL) {
       if(*uart_last_out_ptr != '\0') {
         UCA0TXBUF = *uart_last_out_ptr++;
