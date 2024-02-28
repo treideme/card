@@ -13,14 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Utility functions for NFC EEPROM.
- * @file st25dv.h
- * @author Thomas Reidemeister
- */
-#ifndef _st25dv_h_
-#define _st25dv_h_
+#include "st25dv.h"
 
-extern int st25dv_field_flag;
-
-#endif // _st25dv_h_
+int st25dv_field_flag = 0;

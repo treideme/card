@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 /**
- * Main firmware entry point.
+ * Utility functions for NFC EEPROM.
+ * @file st25dv.h
  * @author Thomas Reidemeister
- * @file main.c
  */
-#include <hardware.h>
-#include <msp430.h>
-#include "uart.h"
-#include "i2c.h"
+#ifndef ST25DV_H
+#define ST25DV_H
 
-//static int field_seen = 0;
+extern int st25dv_field_flag;
 
-int main(void) {
-  hardware_init();
-
-  uart_send("Hello World!\r\n");
-//  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
-  for(;;);
-
-
-  return 0;
-}
-
+#endif // ST25DV_H

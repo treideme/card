@@ -33,8 +33,8 @@
  *            1MHz DCO operation
  * @endverbatim
  */
-#ifndef _hardware_h_
-#define _hardware_h_
+#ifndef HARDWARE_H
+#define HARDWARE_H
 
 #include <msp430.h>
 #include "st25dv.h"
@@ -44,4 +44,4 @@
 void hardware_init();
 void delay_ms(int ms);
 
-#endif // _hardware_h_
+#endif // HARDWARE_H

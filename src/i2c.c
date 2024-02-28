@@ -58,7 +58,7 @@ void i2c_write(uint8_t count, uint8_t *txd) {
     UCB0CTL1 |= UCTR + UCTXSTT;                    // I2C TX, start condition
 
     __bis_SR_register(CPUOFF + GIE);               // Enter LPM0 w/ interrupts
-    while (UCB0CTL1 & UCTXSTP);
+    while (UCB0CTL1 & UCTXSTP) {}
 }
 
 void i2c_read(uint8_t count, volatile uint8_t *rxd) {
@@ -75,9 +75,9 @@ void i2c_read(uint8_t count, volatile uint8_t *rxd) {
     i2c_rx_count = count;                          // Load RX byte counter
 
     //If only 1 byte will be read send stop signal as soon as it starts transmission
-    if(i2c_rx_count == 1){
+    if(i2c_rx_count == 1) {
         UCB0CTL1 |= UCTXSTT;                       // I2C start condition
-        while (UCB0CTL1 & UCTXSTT);                // Start condition sent?
+        while (UCB0CTL1 & UCTXSTT) { }             // Start condition sent?
         UCB0CTL1 |= UCTXSTP;                       // I2C stop condition
         __enable_interrupt();
     } else {
@@ -85,5 +85,5 @@ void i2c_read(uint8_t count, volatile uint8_t *rxd) {
     }
 
     __bis_SR_register(CPUOFF + GIE);               // Enter LPM0 w/ interrupts
-    while (UCB0CTL1 & UCTXSTP);                    // Ensure stop condition got sent
+    while (UCB0CTL1 & UCTXSTP) {}                  // Ensure stop condition got sent
 }

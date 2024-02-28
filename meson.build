@@ -1,4 +1,4 @@
-project('MSP430 Template', 
+project('MSP430 Business Card',
 	'c',
 	version : '0.1',
 	default_options : [ 
@@ -14,8 +14,18 @@ objcopy = find_program('msp430-elf-objcopy', required : true)
 objdump = find_program('msp430-elf-objdump', required : true)
 # gdbserver = find_program('gdb_agent_console', required: true)
 
+cpplint_program = find_program('cpplint', required : false)
+if cpplint_program.found()
+	# - https://github.com/cpplint/cpplint
+
+	cpplint_config = ['--verbose=0',
+					  '--recursive',
+					  join_paths(meson.current_source_dir(), 'include'), join_paths(meson.current_source_dir(), 'src')]
+	cpplint_target = run_target('cpplint', command : [cpplint_program, cpplint_config])
+endif
+
 incdir = [
-	#include_directories('inc'),
+	include_directories('include'),
 	#include_directories('usb'),
 	get_option('MSP430HOME')+'/include/',
 ]
@@ -34,12 +44,12 @@ t_mapfile = '-Wl,-Map,@0@.map'
 
 progs = [
 	['business_card', [
-		 'main.c',
-		 'hardware.c',
-		 'interrupts.c',
-		 'i2c.c',
-		 'st25dv.c',
-		 'uart.c'],
+		 'src/main.c',
+		 'src/hardware.c',
+		 'src/interrupts.c',
+		 'src/i2c.c',
+		 'src/st25dv.c',
+		 'src/uart.c'],
 	 'Business Card',
 	 'msp430g2553'],
 ]

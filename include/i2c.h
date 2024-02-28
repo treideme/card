@@ -18,8 +18,8 @@
  * @file i2c.h
  * @author Thomas Reidemeister
  */
-#ifndef _i2c_h_
-#define _i2c_h_
+#ifndef I2C_H
+#define I2C_H
 
 #include <stdint.h>
 
@@ -37,4 +37,4 @@ void i2c_read(uint8_t ByteCtr, volatile uint8_t *RxData);
 
 
 
-#endif // _i2c_h_
+#endif // I2C_H
