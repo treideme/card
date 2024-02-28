@@ -28,7 +28,7 @@ jobs:
       - name: Install OS dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget build-essential software-properties-common meson ninja-build unzip python3-pip
+          sudo apt-get install -y wget build-essential software-properties-common meson ninja-build unzip python3-pip cppcheck
           # Download TI compiler and support files
           wget https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-LlCjWuAbzH/9.3.1.2/msp430-gcc-9.3.1.11_linux64.tar.bz2
           wget https://dr-download.ti.com/software-development/ide-configuration-compiler-or-debugger/MD-LlCjWuAbzH/9.3.1.2/msp430-gcc-support-files-1.212.zip
@@ -54,6 +54,7 @@ jobs:
           meson build --cross-file=cross.ini -DMSP430HOME=${MSP430HOME}
           ninja -C build
           ninja -C build cpplint
+          ninja -C build cppcheck
           cd ..
 
       - name: Upload installer artifact
