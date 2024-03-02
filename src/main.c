@@ -39,7 +39,6 @@ int main(void) {
 //  tmp[19] = 0;
 //  uart_send(tmp);
 //  uart_send("\r\nend\r\n");
-  for(;;);
 //  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
   for(;;) {}
 
