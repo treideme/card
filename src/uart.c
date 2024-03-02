@@ -35,7 +35,7 @@ void uart_init() {
 }
 
 void uart_send(const char*s) {
-  while(uart_last_out_ptr != NULL);
+  while(uart_last_out_ptr != NULL) {}
   __disable_interrupt();
   uart_last_out_ptr = (char*)s;
 

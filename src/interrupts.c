@@ -23,8 +23,7 @@
 #include "hardware.h"
 
 // PORT1_VECTOR
-void __attribute__ ((interrupt(PORT1_VECTOR)))  PORT1_ISR(void)
-{
+void __attribute__ ((interrupt(PORT1_VECTOR)))  PORT1_ISR(void) {
   if(P1IFG & BIT3) {
     st25dv_field_flag = 1;
     P1IE &= ~BIT3;  // disable P1.3 interrupt
@@ -34,8 +33,7 @@ void __attribute__ ((interrupt(PORT1_VECTOR)))  PORT1_ISR(void)
 }
 
 //  Echo back RXed character, confirm TX buffer is ready first
-void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void)
-{
+void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void) {
   // UART0
   if(IFG2 & UCA0RXIFG) {
     uart_last_in = UCA0RXBUF;                    // TX -> RXed character
@@ -52,8 +50,7 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void)
 }
 
 //  Echo back RXed character, confirm TX buffer is ready first
-void __attribute__ ((interrupt(USCIAB0TX_VECTOR)))  USCI0TX_ISR(void)
-{
+void __attribute__ ((interrupt(USCIAB0TX_VECTOR)))  USCI0TX_ISR(void) {
   // UART0
   if(IFG2 & UCA0TXIFG) {
     if(uart_last_out_ptr != NULL) {

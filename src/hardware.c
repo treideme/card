@@ -52,7 +52,7 @@ void hardware_init() {
 
 void delay_ms(int ms) {
     volatile unsigned int i, j;
-    for(i=ms; i>0; i--) {
-        for(j=0; j < 200; j++); // delay
+    for( i = ms; i > 0; i--) {
+        for( j = 0; j < 200; j++) {} // delay
     }
 }

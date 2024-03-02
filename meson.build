@@ -1,9 +1,10 @@
-project('MSP430 Template', 
+project('MSP430 Business Card',
 	'c',
 	version : '0.1',
 	default_options : [ 
 		'buildtype=minsize', 
 		'c_std=c99',
+		'warning_level=3',
 	],
 )
 
@@ -13,12 +14,36 @@ assert(meson.is_cross_build(), 'Use cross-build for MSP430 target')
 objcopy = find_program('msp430-elf-objcopy', required : true)
 objdump = find_program('msp430-elf-objdump', required : true)
 # gdbserver = find_program('gdb_agent_console', required: true)
+cpplint_program = find_program('cpplint', required : false)
+cppcheck_program = find_program('cppcheck', required : false)
 
 incdir = [
-	#include_directories('inc'),
+	include_directories('include'),
 	#include_directories('usb'),
 	get_option('MSP430HOME')+'/include/',
 ]
+
+if cpplint_program.found()
+	cpplint_config = ['--verbose=0',
+					  '--recursive',
+					  join_paths(meson.current_source_dir(), 'include'), join_paths(meson.current_source_dir(), 'src')]
+	cpplint_target = run_target('cpplint', command : [cpplint_program, cpplint_config])
+endif
+
+if cppcheck_program.found()
+	cppcheck_config = ['--check-config',
+					   '--enable=all',
+					   '--suppress=missingIncludeSystem',
+					   '--std=c99',
+					   '--language=c',
+					   '-I', get_option('MSP430HOME')+'/include/',
+					   '-I', join_paths(meson.current_source_dir(), 'include'),
+					   '-D__MSP430G2553__',
+					   join_paths(meson.current_source_dir(), 'include'),
+					   join_paths(meson.current_source_dir(), 'src')]
+	cppcheck_target = run_target('cppcheck', command : [cppcheck_program, cppcheck_config])
+endif
+
 
 t_executable = '@0@.elf'
 t_bin = '@0@.bin'
@@ -34,12 +59,12 @@ t_mapfile = '-Wl,-Map,@0@.map'
 
 progs = [
 	['business_card', [
-		 'main.c',
-		 'hardware.c',
-		 'interrupts.c',
-		 'i2c.c',
-		 'st25dv.c',
-		 'uart.c'],
+		 'src/main.c',
+		 'src/hardware.c',
+		 'src/interrupts.c',
+		 'src/i2c.c',
+		 'src/st25dv.c',
+		 'src/uart.c'],
 	 'Business Card',
 	 'msp430g2553'],
 ]

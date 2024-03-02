@@ -13,34 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Main firmware entry point.
- * @author Thomas Reidemeister
- * @file main.c
- */
-#include <hardware.h>
-#include <msp430.h>
-#include "uart.h"
-#include "i2c.h"
+#include "st25dv.h"
 
-//static int field_seen = 0;
-
-int main(void) {
-  hardware_init();
-
-  volatile uint16_t c = 0;
-  char tmp[20];
-
-  uart_send("Hello World!\r\n");
-  i2c_master_init(0x2D);
-  i2c_read(0x02, &c);
-  itoa(c, tmp, 10);
-  tmp[19] = 0;
-  uart_send(tmp);
-  uart_send("\r\nend\r\n");
-  for(;;);
-
-
-  return 0;
-}
-
+int st25dv_field_flag = 0;
