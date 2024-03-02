@@ -3,7 +3,7 @@ project('MSP430 Business Card',
 	version : '0.1',
 	default_options : [ 
 		'buildtype=minsize', 
-		'c_std=c99',
+		'c_std=gnu99',
 		'warning_level=3',
 	],
 )

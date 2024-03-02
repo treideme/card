@@ -29,16 +29,16 @@
 int main(void) {
   hardware_init();
 
-  uint16_t c = 0;
-  char tmp[20];
+//  uint16_t c = 0;
+//  char tmp[20];
 
   uart_send("Hello World!\r\n");
-  i2c_master_init(0x2D);
-  i2c_read(0x02, (uint8_t*)&c);
-  itoa(c, tmp, 10);
-  tmp[19] = 0;
-  uart_send(tmp);
-  uart_send("\r\nend\r\n");
+//  i2c_master_init(0x2D);
+//  i2c_read(0x02, (uint8_t*)&c);
+//  itoa(c, tmp, 10);
+//  tmp[19] = 0;
+//  uart_send(tmp);
+//  uart_send("\r\nend\r\n");
   for(;;);
 //  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
   for(;;) {}
