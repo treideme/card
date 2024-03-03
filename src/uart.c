@@ -21,7 +21,7 @@
 #include <msp430.h>
 #include <stdlib.h>
 
-char* uart_last_out_ptr = NULL;
+volatile char* volatile uart_last_out_ptr = NULL;
 char uart_last_in;
 
 void uart_init() {
@@ -35,9 +35,9 @@ void uart_init() {
 }
 
 void uart_send(const char*s) {
-  while(uart_last_out_ptr != NULL) {}
+  while(uart_last_out_ptr != NULL) {  }
   __disable_interrupt();
-  uart_last_out_ptr = (char*)s;
+  uart_last_out_ptr = (volatile char*)s;
 
   // Enable interrupt
   IE2 |=UCA0TXIE;

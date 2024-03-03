@@ -47,7 +47,7 @@ void hardware_init() {
   P1SEL |= BIT6 + BIT7; // Assign I2C pins to USCI_B0
   P1SEL2|= BIT6 + BIT7; // Assign I2C pins to USCI_B0
 
-  i2c_master_init(0x2D);
+  i2c_master_init();
 }
 
 void delay_ms(int ms) {

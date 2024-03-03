@@ -23,10 +23,11 @@
 
 #include <msp430.h>
 
-extern char *uart_last_out_ptr;
-extern char uart_last_in;
+// Do not optimize pointer out, and force readback of value in functions
+extern volatile char* volatile uart_last_out_ptr;
+extern volatile char uart_last_in;
 
-void uart_init();
+void uart_init(void);
 void uart_send(const char*s);
 
 #endif // _hardware_h_

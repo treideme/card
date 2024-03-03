@@ -38,7 +38,7 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void) {
   if(IFG2 & UCA0RXIFG) {
     uart_last_in = UCA0RXBUF;                    // TX -> RXed character
   }
-  if(IFG2 & UCB0RXIE) {
+  /*if(IFG2 & UCB0RXIE) {
     if(i2c_rx_count) {
       i2c_rx_count--;                            // Decrement RX byte counter
       *i2c_rx_data = UCB0RXBUF;
@@ -46,7 +46,7 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void) {
         UCB0CTL1 |= UCTXSTP;                     // Generate I2C stop condition
       }
     }
-  }
+  }*/
 }
 
 //  Echo back RXed character, confirm TX buffer is ready first

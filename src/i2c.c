@@ -20,70 +20,132 @@
  */
 #include "i2c.h"
 #include <msp430.h>
-#include <stdlib.h>
 
 uint8_t *i2c_tx_data = NULL;                     // Pointer to TX data
 uint8_t *i2c_rx_data = NULL;                     // Pointer to RX data
 uint8_t i2c_tx_count = 0;
 uint8_t i2c_rx_count = 0;
 
-void i2c_master_init(uint8_t slaveAddress) {
+void i2c_master_init(void) {
     //USCI Configuration
-    UCB0CTL1 |= UCSWRST;                           // Enable SW reset
-    UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;          // I2C Master, synchronous mode
-    UCB0CTL1 = UCSSEL_2 + UCSWRST;                 // Use SMCLK, keep SW reset
+    UCB0CTL1 = UCSWRST;                            // Enable SW reset
+    UCB0CTL0 = UCMST | UCMODE_3 | UCSYNC;          // I2C Master, synchronous mode
 
     //Set USCI Clock Speed
-    UCB0BR0 = 12;                                  // fSCL = SMCLK/12 = ~100kHz
+    UCB0BR0 = 10;                                  // fSCL = SMCLK/10 = ~100kHz
     UCB0BR1 = 0;
 
-    //Set Slave Address and Resume operation
-    UCB0I2CSA = slaveAddress;                      // Slave Address passed as parameter
-    UCB0CTL1 &= ~UCSWRST;                          // Clear SW reset, resume operation
+    UCB0CTL1 = UCSSEL_2;                           // Use SMCLK, release reset
 }
 
+static int _check_ack(void) {
+  int err = 0;
 
-void i2c_write(uint8_t count, uint8_t *txd) {
-    __disable_interrupt();
+  /* Check for ACK */
+  if (UCB0STAT & UCNACKIFG) {
+    /* Stop the I2C transmission */
+    UCB0CTL1 |= UCTXSTP;
 
-    //Interrupt management
-    IE2 &= ~UCB0RXIE;                              // Disable RX interrupt
-    IE2 |= UCB0TXIE;                               // Enable TX interrupt
+    /* Clear the interrupt flag */
+    UCB0STAT &= ~UCNACKIFG;
 
-    //Pointer to where data is stored to be sent
-    i2c_tx_data = (uint8_t *) txd;                 // TX array start address
-    i2c_tx_count = count;                          // Load TX byte counter
+    /* Set the error code */
+    err = -1;
+  }
 
-    //Send start condition
-    UCB0CTL1 |= UCTR + UCTXSTT;                    // I2C TX, start condition
-
-    __bis_SR_register(CPUOFF + GIE);               // Enter LPM0 w/ interrupts
-    while (UCB0CTL1 & UCTXSTP) {}
+  return err;
 }
 
-void i2c_read(uint8_t count, uint8_t *rxd) {
-    __disable_interrupt();
+static int _i2c_write(const uint8_t *tx_data, size_t tx_len) {
+  int err;
 
-    //Interrupt management
-    IE2 &= ~UCB0TXIE;                              // Disable TX interrupt
-    UCB0CTL1 = UCSSEL_2 + UCSWRST;                 // Use SMCLK, keep SW reset
-    UCB0CTL1 &= ~UCSWRST;                          // Clear SW reset, resume operation
-    IE2 |= UCB0RXIE;                               // Enable RX interrupt
+  /* Send the start condition */
+  UCB0CTL1 |= UCTR | UCTXSTT;
 
-    //Pointer to where data will be stored
-    i2c_rx_data = (uint8_t *)rxd;                  // Start of RX buffer
-    i2c_rx_count = count;                          // Load RX byte counter
+  /* Wait for the start condition to be sent and ready to transmit interrupt */
+  while ((UCB0CTL1 & UCTXSTT) && ((IFG2 & UCB0TXIFG) == 0)) {}
 
-    //If only 1 byte will be read send stop signal as soon as it starts transmission
-    if(i2c_rx_count == 1) {
-        UCB0CTL1 |= UCTXSTT;                       // I2C start condition
-        while (UCB0CTL1 & UCTXSTT) { }             // Start condition sent?
-        UCB0CTL1 |= UCTXSTP;                       // I2C stop condition
-    } else {
-        UCB0CTL1 |= UCTXSTT;                       // I2C start condition
+  /* Check for ACK */
+  err = _check_ack();
+
+  /* If no error and bytes left to send, transmit the data */
+  while ((err == 0) && (tx_len > 0)) {
+    UCB0TXBUF = *tx_data;
+    while ((IFG2 & UCB0TXIFG) == 0) {
+      err = _check_ack();
+      if (err < 0) {
+        break;
+      }
     }
 
-    __enable_interrupt();
-    __bis_SR_register(CPUOFF + GIE);               // Enter LPM0 w/ interrupts
-    while (UCB0CTL1 & UCTXSTP) {}                  // Ensure stop condition got sent
+    tx_data++;
+    tx_len--;
+  }
+
+  return err;
 }
+
+int _i2c_read(uint8_t *rx_buf, size_t rx_len) {
+  int err;
+
+  /* Send the start and wait */
+  UCB0CTL1 &= ~UCTR;
+  UCB0CTL1 |= UCTXSTT;
+
+  /* Wait for the start condition to be sent */
+  while (UCB0CTL1 & UCTXSTT) {}
+
+  /*
+   * If there is only one byte to receive, then set the stop
+   * bit as soon as start condition has been sent
+   */
+  if (rx_len == 1) {
+    UCB0CTL1 |= UCTXSTP;
+  }
+
+  /* Check for ACK */
+  err = _check_ack();
+
+  /* If no error and bytes left to receive, receive the data */
+  while ((err == 0) && (rx_len > 0)) {
+    /* Wait for the data */
+    while ((IFG2 & UCB0RXIFG) == 0);
+
+    *rx_buf = UCB0RXBUF;
+    rx_buf++;
+    rx_len--;
+
+    /*
+     * If there is only one byte left to receive
+     * send the stop condition
+     */
+    if (rx_len == 1) {
+      UCB0CTL1 |= UCTXSTP;
+    }
+  }
+
+  return err;
+}
+
+int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf, size_t rx_len) {
+  int err = 0;
+
+  /* Set the slave device address */
+  UCB0I2CSA = addr;
+
+  /* Transmit data is there is any */
+  if (tx_len) {
+    err = _i2c_write(tx_data, tx_len);
+  }
+
+  /* Receive data is there is any */
+  if ((err == 0) && (rx_len > 0)) {
+    err = _i2c_read(rx_buf, rx_len);
+  } else {
+    /* No bytes to receive send the stop condition */
+    UCB0CTL1 |= UCTXSTP;
+  }
+
+  return err;
+}
+
