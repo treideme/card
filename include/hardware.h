@@ -36,10 +36,31 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include <stdint.h>
 #include <msp430.h>
 #include "st25dv.h"
 #include "uart.h"
 #include "i2c.h"
+
+// Useful macros
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+#define HEX__(n)    0x##n##LU
+#define B8__(x)     ((x&0x0000000FLU)?1:0) \
+                   +((x&0x000000F0LU)?2:0) \
+                   +((x&0x00000F00LU)?4:0) \
+                   +((x&0x0000F000LU)?8:0) \
+                   +((x&0x000F0000LU)?16:0) \
+                   +((x&0x00F00000LU)?32:0) \
+                   +((x&0x0F000000LU)?64:0) \
+                   +((x&0xF0000000LU)?128:0)
+
+// Note bitfields are GCC extensions, use macros instead to permit pedantic checks
+#define B8(d)                      ((uint8_t)B8__(HEX__(d)))
+#define B16(dmsb, dlsb)            (((uint16_t)B8(dmsb) << 8) + B8(dlsb))
+#define B32(dmsb, db2, db3, dlsb)  (((uint32_t)B8(dmsb) << 24) \
+                                  + ((uint32_t)B8(db2) << 16) \
+                                  + ((uint32_t)B8(db3) << 8) \
+                                  + B8(dlsb))
 
 void hardware_init();
 void delay_ms(int ms);

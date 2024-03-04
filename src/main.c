@@ -18,20 +18,39 @@
  * @author Thomas Reidemeister
  * @file main.c
  */
+#include <stdlib.h>
 #include <hardware.h>
-#include <msp430.h>
-#include "uart.h"
-#include "i2c.h"
 
 //static int field_seen = 0;
 
 int main(void) {
   hardware_init();
 
-  uart_send("Hello World!\r\n");
-//  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
-  for(;;) {}
+  char tmp[20];
 
+  uart_send("Hello World!\r\n");
+  const uint8_t reg = 0x39;
+  uint8_t id = 0x00;
+  uart_send("Before transfer\r\n");
+  /**
+   * Note MSP430 takes 7-bit address and automatically fixes R/W bit in implementation.
+   */
+  int err = i2c_transfer(B8(00110000), &reg, 1, &id, 1);
+  if(err) {
+    uart_send("Error\r\n");
+  } else {
+    uart_send("OK");
+    itoa(id, tmp, 10);
+    uart_send(tmp);
+    uart_send("\r\n");
+  }
+
+  uart_deinit();
+  i2c_deinit();
+
+  for(;;) {
+    __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, interrupts enabled (ISR will clear LPM0)
+  }
 
   return 0;
 }

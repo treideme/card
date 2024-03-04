@@ -35,33 +35,23 @@ void __attribute__ ((interrupt(PORT1_VECTOR)))  PORT1_ISR(void) {
 //  Echo back RXed character, confirm TX buffer is ready first
 void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void) {
   // UART0
-  if(IFG2 & UCA0RXIE) {
+  if(IFG2 & UCA0RXIFG) {
     uart_last_in = UCA0RXBUF;                    // TX -> RXed character
-  }
-  if(IFG2 & UCB0RXIE) {
-    if(i2c_rx_count) {
-      i2c_rx_count--;                            // Decrement RX byte counter
-      *i2c_rx_data = UCB0RXBUF;
-      if (i2c_rx_count == 1) {                   // Only one byte left?
-        UCB0CTL1 |= UCTXSTP;                     // Generate I2C stop condition
-      }
-    }
   }
 }
 
 //  Echo back RXed character, confirm TX buffer is ready first
 void __attribute__ ((interrupt(USCIAB0TX_VECTOR)))  USCI0TX_ISR(void) {
   // UART0
-  if(IFG2 & UCA0TXIE) {
-    if(uart_last_out_ptr != NULL) {
-      if(*uart_last_out_ptr != '\0') {
-        UCA0TXBUF = *uart_last_out_ptr++;
-      } else {
-        uart_last_out_ptr = NULL;
-        IE2 &= ~UCA0TXIE;                   // Disable interrupt
-      }
-    } else {
-      IE2 &= ~UCA0TXIE;                     // Disable interrupt
+  if(IFG2 & UCA0TXIFG) {
+    if(uart_isr()) {
+      __bic_SR_register_on_exit(LPM0_bits); // wake system up
+    }
+  }
+  // I2C
+  if(IFG2 & UCB0TXIFG) {
+    if(i2c_tx_isr()) {
+      __bic_SR_register_on_exit(LPM0_bits); // wake system up
     }
   }
 }

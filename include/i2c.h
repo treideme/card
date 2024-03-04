@@ -22,19 +22,35 @@
 #define I2C_H
 
 #include <stdint.h>
+#include <stddef.h>
 
-extern uint8_t *i2c_tx_data;                     // Pointer to TX data
-extern uint8_t *i2c_rx_data;                     // Pointer to RX data
-extern uint8_t i2c_tx_count;                     // Transmit bytes left
-extern uint8_t i2c_rx_count;
+/**
+ * Initialize I2C master.
+ */
+void i2c_master_init(void);
 
-//static uint8_t TxByteCtr;
-//static uint8_t RxByteCtr;
+/**
+ * Deinitialize I2C.
+ */
+void i2c_deinit(void);
 
-void i2c_master_init(uint8_t slaveAddress);
-void i2c_write(uint8_t ByteCtr, uint8_t *TxData);
-void i2c_read(uint8_t ByteCtr, volatile uint8_t *RxData);
+/**
+ * Perform I2C transfer.
+ * @param addr 7-bit address to use for client
+ * @param tx_data TX data to send
+ * @param tx_len Length of tx data to send.
+ * @param rx_buf RX buffer to store received data.
+ * @param rx_len Length of rx buffer.
+ * @return 0 on success, nz on error.
+ */
+int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf,
+                 size_t rx_len);
 
+/**
+ * I2C TX interrupt service routine for transmits.
+ * @return 1 If system should wake up.
+ */
+int i2c_tx_isr(void);
 
 
 #endif // I2C_H

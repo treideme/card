@@ -23,10 +23,31 @@
 
 #include <msp430.h>
 
-extern char *uart_last_out_ptr;
-extern char uart_last_in;
+// Do not optimize pointer out, and force readback of value in functions
+extern char* volatile uart_last_out_ptr;
+extern volatile char uart_last_in;
 
-void uart_init();
+/**
+ * Initialize UART0.
+ */
+void uart_init(void);
+
+/**
+ * Deinitialize UART0.
+ */
+void uart_deinit(void);
+
+/**
+ * Send a string over UART.
+ * @param s String to send, ensure 0 termination
+ * @warning This will block if UART is busy.
+ */
 void uart_send(const char*s);
+
+/**
+ * UART interrupt service routine.
+ * @return 1 If system should wake up.
+ */
+int uart_isr(void);
 
 #endif // _hardware_h_
