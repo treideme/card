@@ -55,12 +55,12 @@
                    +((x&0xF0000000LU)?128:0)
 
 // Note bitfields are GCC extensions, use macros instead to permit pedantic checks
-#define B8(d)                   ((uint8_t)B8__(HEX__(d)))
-#define B16(dmsb,dlsb)          (((uint16_t)B8(dmsb) << 8) + B8(dlsb))
-#define B32(dmsb,db2,db3,dlsb)  (((uint32_t)B8(dmsb) << 24) \
-                               + ((uint32_t)B8(db2) << 16) \
-                               + ((uint32_t)B8(db3) << 8) \
-                               + B8(dlsb))
+#define B8(d)                      ((uint8_t)B8__(HEX__(d)))
+#define B16(dmsb, dlsb)            (((uint16_t)B8(dmsb) << 8) + B8(dlsb))
+#define B32(dmsb, db2, db3, dlsb)  (((uint32_t)B8(dmsb) << 24) \
+                                  + ((uint32_t)B8(db2) << 16) \
+                                  + ((uint32_t)B8(db3) << 8) \
+                                  + B8(dlsb))
 
 void hardware_init();
 void delay_ms(int ms);
