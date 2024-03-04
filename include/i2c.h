@@ -24,14 +24,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
-extern uint8_t *i2c_tx_data;                     // Pointer to TX data
-extern uint8_t *i2c_rx_data;                     // Pointer to RX data
-extern uint8_t i2c_tx_count;                     // Transmit bytes left
-extern uint8_t i2c_rx_count;
-
 void i2c_master_init(void);
 int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf, size_t rx_len);
-
+int i2c_tx_isr(void);
+int i2c_rx_isr(void);
 
 
 #endif // I2C_H
