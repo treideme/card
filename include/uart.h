@@ -27,7 +27,21 @@
 extern char* volatile uart_last_out_ptr;
 extern volatile char uart_last_in;
 
+/**
+ * Initialize UART0.
+ */
 void uart_init(void);
+
+/**
+ * Deinitialize UART0.
+ */
+void uart_deinit(void);
+
+/**
+ * Send a string over UART.
+ * @param s String to send, ensure 0 termination
+ * @warning This will block if UART is busy.
+ */
 void uart_send(const char*s);
 
 /**

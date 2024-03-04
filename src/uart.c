@@ -34,8 +34,18 @@ void uart_init() {
   IE2 |= UCA0RXIE;             // Enable USCI_A0 RX interrupt
 }
 
+void uart_deinit() {
+  while(uart_last_out_ptr != NULL) {
+    __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, interrupts enabled (ISR will clear LPM0)
+  }
+  __disable_interrupt();
+  UCA0CTL1 |= UCSWRST;        // **Put state machine in reset**
+  IE2 &= ~UCA0RXIE;            // Disable USCI_A0 RX interrupt
+  __enable_interrupt();
+}
+
 void uart_send(const char*s) {
-  /* Wait until last transmission cleared */
+  /* Wait until last transmission cleared (FIXME, maybe check flag) */
   while(uart_last_out_ptr != NULL) {
     __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, interrupts enabled (ISR will clear LPM0)
   }

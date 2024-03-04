@@ -24,10 +24,32 @@
 #include <stdint.h>
 #include <stddef.h>
 
+/**
+ * Initialize I2C master.
+ */
 void i2c_master_init(void);
+
+/**
+ * Deinitialize I2C.
+ */
+void i2c_deinit(void);
+
+/**
+ * Perform I2C transfer.
+ * @param addr 7-bit address to use for client
+ * @param tx_data TX data to send
+ * @param tx_len Length of tx data to send.
+ * @param rx_buf RX buffer to store received data.
+ * @param rx_len Length of rx buffer.
+ * @return 0 on success, nz on error.
+ */
 int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf, size_t rx_len);
+
+/**
+ * I2C TX interrupt service routine for transmits.
+ * @return 1 If system should wake up.
+ */
 int i2c_tx_isr(void);
-int i2c_rx_isr(void);
 
 
 #endif // I2C_H

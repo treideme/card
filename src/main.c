@@ -44,14 +44,13 @@ int main(void) {
     uart_send(tmp);
     uart_send("\r\n");
   }
-//  i2c_master_init(0x2D);
-//  i2c_read(0x02, (uint8_t*)&c);
-//  itoa(c, tmp, 10);
-//  tmp[19] = 0;
-//  uart_send(tmp);
-//  uart_send("\r\nend\r\n");
-//  __bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
-  for(;;) {}
+
+  uart_deinit();
+  i2c_deinit();
+
+  for(;;) {
+    __bis_SR_register(LPM0_bits + GIE); // Enter LPM0, interrupts enabled (ISR will clear LPM0)
+  }
 
   return 0;
 }

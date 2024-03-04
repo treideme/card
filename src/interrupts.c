@@ -38,13 +38,6 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR)))  USCI0RX_ISR(void) {
   if(IFG2 & UCA0RXIFG) {
     uart_last_in = UCA0RXBUF;                    // TX -> RXed character
   }
-  // I2C
-  if(IFG2 & UCB0RXIFG) {
-    while(1) { }
-    if(i2c_rx_isr()) {
-      __bic_SR_register_on_exit(LPM0_bits); // wake system up
-    }
-  }
 }
 
 //  Echo back RXed character, confirm TX buffer is ready first
