@@ -123,7 +123,8 @@ int _i2c_read(uint8_t *rx_buf, size_t rx_len) {
   return err;
 }
 
-int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf, size_t rx_len) {
+int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf,
+                 size_t rx_len) {
   int err = 0;
 
   // Set the slave device address
