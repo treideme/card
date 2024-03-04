@@ -43,7 +43,8 @@ void i2c_deinit(void);
  * @param rx_len Length of rx buffer.
  * @return 0 on success, nz on error.
  */
-int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf, size_t rx_len);
+int i2c_transfer(uint8_t addr, const uint8_t *tx_data, size_t tx_len, uint8_t *rx_buf,
+                 size_t rx_len);
 
 /**
  * I2C TX interrupt service routine for transmits.

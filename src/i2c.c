@@ -18,10 +18,8 @@
  * @file i2c.h
  * @author Thomas Reidemeister
  */
-#include "i2c.h"
-#include "uart.h"
-#include <stdlib.h>
 #include <msp430.h>
+#include "i2c.h"
 
 static uint8_t * volatile _i2c_tx_data = NULL;
 static volatile uint8_t _i2c_tx_count = 0;
@@ -107,7 +105,7 @@ int _i2c_read(uint8_t *rx_buf, size_t rx_len) {
   // If no error and bytes left to receive, receive the data
   while ((err == 0) && (rx_len > 0)) {
     // Wait for the data
-    while ((IFG2 & UCB0RXIFG) == 0);
+    while ((IFG2 & UCB0RXIFG) == 0) { }
 
     *rx_buf = UCB0RXBUF;
     rx_buf++;
